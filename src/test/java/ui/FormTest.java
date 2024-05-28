@@ -9,7 +9,7 @@ import java.io.File;
 
 import static com.codeborne.selenide.Selenide.open;
 
-public class FormPageTest extends FormPage {
+public class FormTest extends FormPage {
     @Before
     public void setUp() {
         // Настройка конфигурации Selenide
@@ -19,7 +19,7 @@ public class FormPageTest extends FormPage {
         System.setProperty("webdriver.chrome.driver", "D:/Downloads/chromedriver_win32/chromedriver.exe");
     }
     @Test
-    public void fillOutTheFormValid(){
+    public void fillOutTheFormValid() {
         try {
             open("https://demoqa.com/automation-practice-form");
             firstName.setValue("Иван");
@@ -27,25 +27,38 @@ public class FormPageTest extends FormPage {
             userEmail.setValue("ivanivanov@mail.ru");
             gender.click();
             userNumber.setValue("8765432191");
-            subjects.setValue("English");
-            subjects.pressEnter();
+            subjects.setValue("English").pressEnter();
             hobbies.click();
             uploadPicture.uploadFile(new File("test/java/utils/nene.jpg"));
             currentAdress.setValue("Manhettan, filadelfia street, 64");
             state.click();
-            state.pressEnter();
+            state.$x(".//div[text()='NCR']").click();
             city.click();
-            city.pressEnter();
+            city.$x(".//div[text()='Delhi']").click();
             submitBtn.click();
             checkSubmit.shouldBe(Condition.visible);
+
+            // Проверка данных во всплывающем окне
+            modal.shouldBe(Condition.visible);
+            modalName.shouldHave(Condition.text("Иван Иванов"));
+            modalEmail.shouldHave(Condition.text("ivanivanov@mail.ru"));
+            modalGender.shouldHave(Condition.text("Male"));
+            modalMobile.shouldHave(Condition.text("8765432191"));
+            modalSubjects.shouldHave(Condition.text("English"));
+            modalHobbies.shouldHave(Condition.text("Reading"));
+            modalPicture.shouldHave(Condition.text("nene.jpg"));
+            modalAddress.shouldHave(Condition.text("Manhettan, filadelfia street, 64"));
+            modalStateCity.shouldHave(Condition.text("NCR Delhi"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
     @Test
     public void fillOutTheFormNotValid(){
         try {
+            open("https://demoqa.com/automation-practice-form");
             firstName.setValue("999");
             lastName.setValue("555");
             userEmail.setValue("ivanivanovmail.ru");
@@ -67,6 +80,5 @@ public class FormPageTest extends FormPage {
             e.printStackTrace();
         }
     }
-
 
 }
